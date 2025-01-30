@@ -22,6 +22,8 @@ String suggestedCrops2[5];
 int cropCount1 = 0;
 int cropCount2 = 0;
 
+bool apiConnectionSuccessful = true; 
+
 void preTransmission() {
   digitalWrite(MAX485_DE, HIGH);
   digitalWrite(MAX485_RE, HIGH);
@@ -90,7 +92,7 @@ void postPhLevel(float phLevel) {
     HTTPClient http;
     http.begin("http://" + String(ipAddress) + "/POST_PH");
     
-    String postData = "{\n    \"pH_level\": " + String(6) + "\n}"; //phLevel
+    String postData = "{\n    \"pH_level\": " + String(6) + "\n}"; 
     
     int httpResponseCode = http.POST(postData); 
 
@@ -98,8 +100,9 @@ void postPhLevel(float phLevel) {
       String response = http.getString();
       Serial.println(httpResponseCode);
       Serial.println(response);
+      apiConnectionSuccessful = true; 
       
-      // Parse the response to extract suggested crops
+
       DynamicJsonDocument doc(1024);
       deserializeJson(doc, response);
       
@@ -116,10 +119,12 @@ void postPhLevel(float phLevel) {
     } else {
       Serial.print("Error on sending POST: ");
       Serial.println(httpResponseCode);
+      apiConnectionSuccessful = false; 
     }
     http.end();
   } else {
     Serial.println("WiFi not connected");
+    apiConnectionSuccessful = false; 
   }
 }
 
@@ -246,18 +251,33 @@ void soilParamsScreen(float nitrogen, float phosphorus, float potassium, float p
 }
 
 void suggestedCropsScreen() {
-  lcd.setCursor(0, 0); lcd.print("GM/day Based Crops");
-  for (int i = 0; i < cropCount1 && i < 5; i++) {
-    lcd.setCursor((i < 3) ? 0 : 10, (i < 3) ? i + 1 : i - 2); 
-    lcd.print(String(i + 1) + suggestedCrops1[i]);
+  lcd.setCursor(0, 0); 
+  lcd.print("GM/day Based Crops");
+
+  if (!apiConnectionSuccessful) {
+    lcd.setCursor(0, 2);
+    lcd.print("API Conn Failed");
+  } else {
+      for (int i = 0; i < cropCount1 && i < 5; i++) {
+        lcd.setCursor((i < 3) ? 0 : 10, (i < 3) ? i + 1 : i - 2); 
+        lcd.print(String(i + 1) + suggestedCrops1[i]);
+    }
   }
+
 }
 
 void riskyWorthCropsScreen() {
-  lcd.setCursor(0, 0); lcd.print("Price Based Crops");
-  for (int i = 0; i < cropCount2 && i < 5; i++) {
-    lcd.setCursor((i < 3) ? 0 : 10, (i < 3) ? i + 1 : i - 2); 
-    lcd.print(String(i + 1) + suggestedCrops2[i]);
+  lcd.setCursor(0, 0); 
+  lcd.print("Price Based Crops");
+
+  if (!apiConnectionSuccessful) {
+    lcd.setCursor(0, 2);
+    lcd.print("API Conn Failed");
+  } else {
+    for (int i = 0; i < cropCount2 && i < 5; i++) {
+      lcd.setCursor((i < 3) ? 0 : 10, (i < 3) ? i + 1 : i - 2); 
+      lcd.print(String(i + 1) + suggestedCrops2[i]);
+    }
   }
 }
 
