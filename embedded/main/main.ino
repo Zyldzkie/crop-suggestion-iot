@@ -4,21 +4,23 @@
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
 
-#define MAX485_DE 19
-#define MAX485_RE 19
+#define MAX485_DE 4
+#define MAX485_RE 4
 
 LiquidCrystal_I2C lcd(0x27, 20, 4); 
 ModbusMaster node;
 float phLevel; 
 
+// CUSTOMIZEABLE - START
 const char* ssid = "test";
 const char* password = "88888888";
-const char* ipAddress = "192.168.31.248";
+const char* ipAddress = "192.168.60.248";
+// CUSTOMIZEABLE - END
 
-String suggestedCrops1[5]; // Global variable to store suggested crops 1
-String suggestedCrops2[5]; // Global variable to store suggested crops 2
-int cropCount1 = 0; // Count of suggested crops 1
-int cropCount2 = 0; // Count of suggested crops 2
+String suggestedCrops1[5]; 
+String suggestedCrops2[5]; 
+int cropCount1 = 0;
+int cropCount2 = 0;
 
 void preTransmission() {
   digitalWrite(MAX485_DE, HIGH);
@@ -31,20 +33,64 @@ void postTransmission() {
 }
 
 void setupWifi() {
+ 
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
-    Serial.println("Connecting to WiFi...");
+    Serial.println("Connecting to WiFi");
+    delay(500);
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Connecting to WiFi");
+    delay(500);
+    lcd.setCursor(0, 1);
+    lcd.print(".");
+    delay(500);
+    lcd.setCursor(0, 2);
+    lcd.print("..");
+    delay(500);
+    lcd.setCursor(0, 3);
+    lcd.print("...");
   }
-  Serial.println("Connected to WiFi");
+  
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Connected to WiFi!");
+  delay(500); 
 }
+
+void reconnectWifi() {
+ 
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    Serial.println("Reconnecting WiFi");
+    delay(500);
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Reconnecting WiFi");
+    delay(500);
+    lcd.setCursor(0, 1);
+    lcd.print(".");
+    delay(500);
+    lcd.setCursor(0, 2);
+    lcd.print("..");
+    delay(500);
+    lcd.setCursor(0, 3);
+    lcd.print("...");
+  }
+  
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Connected to WiFi!");
+  delay(500); 
+}
+
 
 void postPhLevel(float phLevel) {
   if (WiFi.status() == WL_CONNECTED) {
     HTTPClient http;
     http.begin("http://" + String(ipAddress) + "/POST_PH");
     
-    String postData = "{\n    \"pH_level\": " + String(phLevel) + "\n}"; 
+    String postData = "{\n    \"pH_level\": " + String(6) + "\n}"; //phLevel
     
     int httpResponseCode = http.POST(postData); 
 
@@ -81,11 +127,11 @@ void setup() {
   Serial.begin(115200);
   Serial2.begin(4800, SERIAL_8N1, 16, 17);
 
-  setupWifi();
-
   lcd.begin(); 
   lcd.backlight();
-  
+
+  setupWifi();
+ 
   node.begin(1, Serial2);
   node.preTransmission(preTransmission);
   node.postTransmission(postTransmission);
@@ -95,7 +141,7 @@ void setup() {
   digitalWrite(MAX485_DE, LOW);
   digitalWrite(MAX485_RE, LOW);
 
-  delay(1000);
+  delay(500);
 }
 
 String interpretNitrogen(int value) {
@@ -230,32 +276,76 @@ void lcdLoop(float nitrogenValue, float phosphorusValue, float potassiumValue, f
   delay(5000);
 }
 
+bool isWiFiConnected() {
+  if (WiFi.status() != WL_CONNECTED) {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("WiFi Disconnected");
+    Serial.println("WiFi Disconnected");
+    return false;
+  } 
+  return true;
+}
+
 void loop() {
-  float nitrogenValue, phosphorusValue, potassiumValue;
 
-  readSensor(0x04, "Nitrogen", interpretNitrogen);
-  nitrogenValue = node.getResponseBuffer(0); 
+  if (!isWiFiConnected()) {
+    reconnectWifi();
+  }
 
-  readSensor(0x05, "Phosphorus", interpretPhosphorus);
-  phosphorusValue = node.getResponseBuffer(0); 
+  uint8_t result;
+  float pH;
+  float nitrogen;
+  float phosphorus;
+  float potassium;
 
-  readSensor(0x06, "Potassium", interpretPotassium);
-  potassiumValue = node.getResponseBuffer(0); 
-
-  uint8_t result = node.readHoldingRegisters(0x03, 1);
+  result = node.readHoldingRegisters(0x04, 1);
   if (result == node.ku8MBSuccess) {
-    phLevel = node.getResponseBuffer(0) / 10.0; 
+    nitrogen = node.getResponseBuffer(0);
+    Serial.print("Nitrogen: ");
+    Serial.print(node.getResponseBuffer(0));
+    Serial.println(" mg/kg");
+  } else {
+    Serial.println("Error reading Nitrogen");
+  }
+
+  // Read Phosphorus from register 0x05 (40006 in decimal)
+  result = node.readHoldingRegisters(0x05, 1);
+  if (result == node.ku8MBSuccess) {
+    phosphorus = node.getResponseBuffer(0);
+    Serial.print("Phosphorus: ");
+    Serial.print(node.getResponseBuffer(0));
+    Serial.println(" mg/kg");
+  } else {
+    Serial.println("Error reading Phosphorus");
+  }
+
+  // Read Potassium from register 0x06 (40007 in decimal)
+  result = node.readHoldingRegisters(0x06, 1);
+  if (result == node.ku8MBSuccess) {
+    potassium = node.getResponseBuffer(0);
+    Serial.print("Potassium: ");
+    Serial.print(node.getResponseBuffer(0));
+    Serial.println(" mg/kg");
+  } else {
+    Serial.println("Error reading Potassium");
+  }
+
+  // Read pH from register 0x03 (40004 in decimal)
+  result = node.readHoldingRegisters(0x03, 1);
+  if (result == node.ku8MBSuccess) {
+    pH = node.getResponseBuffer(0) / 10.0;
     Serial.print("pH: ");
-    Serial.println(phLevel, 1);
+    Serial.println(pH, 1);
   } else {
     Serial.println("Error reading pH");
   }
 
-  postPhLevel(phLevel);
+  postPhLevel(pH);
 
-  lcdLoop(nitrogenValue, phosphorusValue, potassiumValue, phLevel);
+  lcdLoop(nitrogen, phosphorus, potassium, pH);
 
-  delay(1000);
+  delay(500);
 }
 
 
