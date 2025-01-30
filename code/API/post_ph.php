@@ -65,7 +65,6 @@ $crops_by_month = [];
 foreach ($crops as $crop) {
     $search_crop_id = $crop[1];
 
-
     $sql = "SELECT *
             FROM time_of_planting t
             JOIN crop c ON c.id = t.crop_id 
@@ -75,7 +74,6 @@ foreach ($crops as $crop) {
     $stmt->bind_param("i", $search_crop_id);
     $stmt->execute();
     $result = $stmt->get_result();
-
 
     while ($row = $result->fetch_assoc()) {
         $crop_id = $row['crop_id'];
@@ -89,11 +87,33 @@ foreach ($crops as $crop) {
             $start_date = DateTime::createFromFormat('F', $start_month);
             $end_date = DateTime::createFromFormat('F', $end_month);
 
-            $start_date->modify("-14 days");
-            $end_date->modify("+14 days");
+            if ($start_date && $end_date) {
+                $start_date->modify("-14 days");
+                $end_date->modify("+14 days");
 
-            if ($today >= $start_date && $today <= $end_date) {
-                $crops_by_month[] = ['name' => $name, 'crop_id' => $crop_id];
+                $current_year = (int) $today->format("Y");
+
+                // Set initial years
+                $start_date->setDate($current_year, $start_date->format("n"), $start_date->format("j"));
+                $end_date->setDate($current_year, $end_date->format("n"), $end_date->format("j"));
+
+                if ($start_date > $end_date) {
+                    // Cross-year case: Start (Sep) -> End (Mar)
+                    $end_date->modify("+1 year");
+
+                    $start_of_next_year = new DateTime("$current_year-01-01");
+                    $end_of_this_year = new DateTime("$current_year-12-31");
+
+                    if (($today >= $start_date && $today <= $end_of_this_year) ||
+                        ($today >= $start_of_next_year && $today <= $end_date)) {
+                        $crops_by_month[] = ['name' => $name, 'crop_id' => $crop_id];
+                    }
+                } else {
+                    // Normal case (start and end in the same year)
+                    if ($today >= $start_date && $today <= $end_date) {
+                        $crops_by_month[] = ['name' => $name, 'crop_id' => $crop_id];
+                    }
+                }
             }
         }
     }
@@ -104,6 +124,8 @@ if (!empty($crops_by_month)) {
 } else {
     echo json_encode(["error" => "ERROR", "Message" => "NO Plants can be planted this month"]);
 }
+
+
 
 ////////////////////////////////////////////////
 //END LEVEL TWO - MONTH BASED margin of 14Days//
@@ -219,7 +241,6 @@ $crops_by_month2 = [];
 foreach ($crops2 as $crop) {
     $search_crop_id = $crop[1];
 
-
     $sql = "SELECT *
             FROM time_of_planting_not_in_season t
             JOIN crop c ON c.id = t.crop_id 
@@ -229,7 +250,6 @@ foreach ($crops2 as $crop) {
     $stmt->bind_param("i", $search_crop_id);
     $stmt->execute();
     $result = $stmt->get_result();
-
 
     while ($row = $result->fetch_assoc()) {
         $crop_id = $row['crop_id'];
@@ -243,11 +263,33 @@ foreach ($crops2 as $crop) {
             $start_date = DateTime::createFromFormat('F', $start_month);
             $end_date = DateTime::createFromFormat('F', $end_month);
 
-            $start_date->modify("-14 days");
-            $end_date->modify("+14 days");
+            if ($start_date && $end_date) {
+                $start_date->modify("-14 days");
+                $end_date->modify("+14 days");
 
-            if ($today2 >= $start_date && $today <= $end_date) {
-                $crops_by_month2[] = ['name' => $name, 'crop_id' => $crop_id];
+                $current_year = (int) $today2->format("Y");
+
+                // Set initial years
+                $start_date->setDate($current_year, $start_date->format("n"), $start_date->format("j"));
+                $end_date->setDate($current_year, $end_date->format("n"), $end_date->format("j"));
+
+                if ($start_date > $end_date) {
+                    // Cross-year case: Start (Sep) -> End (Mar)
+                    $end_date->modify("+1 year");
+
+                    $start_of_next_year = new DateTime("$current_year-01-01");
+                    $end_of_this_year = new DateTime("$current_year-12-31");
+
+                    if (($today2 >= $start_date && $today2 <= $end_of_this_year) ||
+                        ($today2 >= $start_of_next_year && $today2 <= $end_date)) {
+                        $crops_by_month2[] = ['name' => $name, 'crop_id' => $crop_id];
+                    }
+                } else {
+                    // Normal case (start and end in the same year)
+                    if ($today2 >= $start_date && $today2 <= $end_date) {
+                        $crops_by_month2[] = ['name' => $name, 'crop_id' => $crop_id];
+                    }
+                }
             }
         }
     }
@@ -258,6 +300,7 @@ if (!empty($crops_by_month2)) {
 } else {
     echo json_encode(["error" => "ERROR", "Message" => "NO Plants can be planted this month"]);
 }
+
 
 ////////////////////////////////////////////////
 //END LEVEL TWO - MONTH BASED margin of 14Days//
