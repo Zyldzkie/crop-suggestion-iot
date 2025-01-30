@@ -44,7 +44,7 @@ void postPhLevel(float phLevel) {
     HTTPClient http;
     http.begin("http://" + String(ipAddress) + "/POST_PH");
     
-    String postData = "{\n    \"pH_level\": " + String(6) + "\n}"; 
+    String postData = "{\n    \"pH_level\": " + String(phLevel) + "\n}"; 
     
     int httpResponseCode = http.POST(postData); 
 
@@ -200,18 +200,18 @@ void soilParamsScreen(float nitrogen, float phosphorus, float potassium, float p
 }
 
 void suggestedCropsScreen() {
-  lcd.setCursor(0, 0); lcd.print("Suggested Crops");
+  lcd.setCursor(0, 0); lcd.print("GM/day Based Crops");
   for (int i = 0; i < cropCount1 && i < 5; i++) {
-    lcd.setCursor(0, i + 1); // Adjust cursor for each crop
-    lcd.print(suggestedCrops1[i]);
+    lcd.setCursor((i < 3) ? 0 : 10, (i < 3) ? i + 1 : i - 2); 
+    lcd.print(String(i + 1) + suggestedCrops1[i]);
   }
 }
 
 void riskyWorthCropsScreen() {
-  lcd.setCursor(0, 0); lcd.print("Risky Worth Crops");
+  lcd.setCursor(0, 0); lcd.print("Price Based Crops");
   for (int i = 0; i < cropCount2 && i < 5; i++) {
-    lcd.setCursor(0, i + 1); // Adjust cursor for each crop
-    lcd.print(suggestedCrops2[i]);
+    lcd.setCursor((i < 3) ? 0 : 10, (i < 3) ? i + 1 : i - 2); 
+    lcd.print(String(i + 1) + suggestedCrops2[i]);
   }
 }
 

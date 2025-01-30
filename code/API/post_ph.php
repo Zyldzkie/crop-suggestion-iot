@@ -152,10 +152,18 @@ if (!empty($crops_by_month)) {
                 'crop_id' => $row['crop_id']
             ];
         }
+
+        // Fill with "N/A" if fewer results than required
+        while (count($crops_final) < $required) {
+            $crops_final[] = [
+                'name' => 'N/A',
+                'crop_id' => 'N/A'
+            ];
+        }
     }
+}
 
     //echo json_encode(["success" => "Final recorded successfully", "Suggested Crops 1" => $crops_final]);
-}
 
 
 //////////////////////////////////////////
@@ -268,6 +276,7 @@ $crops_final2 = [];
 
 $currentMonth = date('n'); 
 
+// Determine the landed month and corresponding table
 $landedMonth = ($currentMonth + 3) % 12;
 if ($landedMonth == 0) {
     $landedMonth = 12;
@@ -302,10 +311,26 @@ if (!empty($crops_by_month2)) {
                 'crop_id' => $row['crop_id']
             ];
         }
-    }
 
-    echo json_encode(["success" => "Final recorded successfully", "Suggested Crops 1" => $crops_final, "Suggested Crops 2" => $crops_final2]);
+        // Fill with "N/A" if fewer results than required
+        while (count($crops_final2) < $required2) {
+            $crops_final2[] = [
+                'name' =>'N/A',
+                'crop_id' => 'N/A'
+            ];
+        }
+    }
 }
+
+// Ensure $crops_final exists before using it
+$crops_final = isset($crops_final) ? $crops_final : [];
+
+echo json_encode([
+    "success" => "Final recorded successfully", 
+    "Suggested Crops 1" => $crops_final, 
+    "Suggested Crops 2" => $crops_final2
+]);
+
 
 $conn->close();
 
