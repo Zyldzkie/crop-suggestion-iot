@@ -154,7 +154,7 @@ if (!empty($crops_by_month)) {
         }
     }
 
-    echo json_encode(["success" => "Final recorded successfully", "Suggested Crops 1" => $crops_final]);
+    //echo json_encode(["success" => "Final recorded successfully", "Suggested Crops 1" => $crops_final]);
 }
 
 
@@ -192,7 +192,7 @@ while ($row = $result->fetch_assoc()) {
 
 $stmt->close();
 
-echo json_encode(["success" => "pH level recorded successfully", "pH_level" => $pH_level, "Crops" => $crops]);
+//echo json_encode(["success" => "pH level recorded successfully", "pH_level" => $pH_level, "Crops" => $crops]);
 
 ////////////////////////////////////////////
 //END LEVEL ONE - PH BASED margin of .03////
@@ -246,7 +246,7 @@ foreach ($crops2 as $crop) {
 }
 
 if (!empty($crops_by_month2)) {
-    echo json_encode(["success" => "Month recorded successfully", "Crops" => $crops_by_month]);
+    //echo json_encode(["success" => "Month recorded successfully", "Crops" => $crops_by_month2]);
 } else {
     echo json_encode(["error" => "ERROR", "Message" => "NO Plants can be planted this month"]);
 }
@@ -263,47 +263,52 @@ if (!empty($crops_by_month2)) {
 //START LEVEL THREE - Utilization BASED//
 /////////////////////////////////////////
 
-$required = 5;
-$crops_final = [];
+$required2 = 5;
+$crops_final2 = [];
 
-// Check if $crops_by_month is not empty
-if (!empty($crops_by_month)) {
-    $crop_ids = array_column($crops_by_month, 'crop_id');
+$currentMonth = date('n'); 
 
-    // Prepare the placeholders for the SQL query
-    if (!empty($crop_ids)) {
-        $placeholders = implode(',', array_fill(0, count($crop_ids), '?'));
+$landedMonth = ($currentMonth + 3) % 12;
+if ($landedMonth == 0) {
+    $landedMonth = 12;
+}
 
-        // SQL query to fetch the crops based on the crop_ids
+$table = ($landedMonth >= 1 && $landedMonth <= 6) ? 'average_price_first_half' : 'average_price_second_half';
+
+if (!empty($crops_by_month2)) {
+    $crop_ids2 = array_column($crops_by_month2, 'crop_id');
+
+    if (!empty($crop_ids2)) {
+        $placeholders = implode(',', array_fill(0, count($crop_ids2), '?'));
+
         $sql = "SELECT *
-                FROM crop_utilization u
-                JOIN crop c ON c.id = u.crop_id 
-                WHERE u.crop_id IN ($placeholders)
-                ORDER BY u.utilization_gm_per_day DESC
-                LIMIT ?"; // Limiting the results based on $required
+                FROM $table p
+                JOIN crop c ON c.id = p.crop_id 
+                WHERE p.crop_id IN ($placeholders)
+                ORDER BY p.price DESC
+                LIMIT ?"; 
 
         $stmt = $conn->prepare($sql);
 
-        // Bind the parameters dynamically
-        $types = str_repeat("i", count($crop_ids)) . "i"; // Binding types for the crop_ids and required
-        $stmt->bind_param($types, ...array_merge($crop_ids, [$required]));
+        $types = str_repeat("i", count($crop_ids2)) . "i"; 
+        $stmt->bind_param($types, ...array_merge($crop_ids2, [$required2]));
 
         $stmt->execute();
         $result = $stmt->get_result();
 
-        // Fetch and store the results
         while ($row = $result->fetch_assoc()) {
-            $crops_final[] = [
+            $crops_final2[] = [
                 'name' => $row['name'],
                 'crop_id' => $row['crop_id']
             ];
         }
     }
 
-    echo json_encode(["success" => "Final recorded successfully", "Suggested Crops 1" => $crops_final]);
+    echo json_encode(["success" => "Final recorded successfully", "Suggested Crops 1" => $crops_final, "Suggested Crops 2" => $crops_final2]);
 }
 
 $conn->close();
+
 
 //////////////////////////////////////////
 //END LEVEL THREE - Utilization BASED//
