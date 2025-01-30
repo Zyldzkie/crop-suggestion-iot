@@ -269,12 +269,10 @@ foreach ($crops2 as $crop) {
 
                 $current_year = (int) $today2->format("Y");
 
-                // Set initial years
                 $start_date->setDate($current_year, $start_date->format("n"), $start_date->format("j"));
                 $end_date->setDate($current_year, $end_date->format("n"), $end_date->format("j"));
 
                 if ($start_date > $end_date) {
-                    // Cross-year case: Start (Sep) -> End (Mar)
                     $end_date->modify("+1 year");
 
                     $start_of_next_year = new DateTime("$current_year-01-01");
@@ -319,7 +317,6 @@ $crops_final2 = [];
 
 $currentMonth = date('n'); 
 
-// Determine the landed month and corresponding table
 $landedMonth = ($currentMonth + 3) % 12;
 if ($landedMonth == 0) {
     $landedMonth = 12;
@@ -355,7 +352,6 @@ if (!empty($crops_by_month2)) {
             ];
         }
 
-        // Fill with "N/A" if fewer results than required
         while (count($crops_final2) < $required2) {
             $crops_final2[] = [
                 'name' =>'N/A',
