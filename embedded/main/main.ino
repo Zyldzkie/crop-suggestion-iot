@@ -258,12 +258,31 @@ void suggestedCropsScreen() {
     lcd.setCursor(0, 2);
     lcd.print("API Conn Failed");
   } else {
-      for (int i = 0; i < cropCount1 && i < 5; i++) {
-        lcd.setCursor((i < 3) ? 0 : 10, (i < 3) ? i + 1 : i - 2); 
-        lcd.print(String(i + 1) + suggestedCrops1[i]);
+    for (int i = 0; i < cropCount1 && i < 5; i++) {
+      int row = (i < 3) ? i + 1 : i - 2; 
+      int col = (i < 3) ? 0 : 10;       
+      
+      String cropName = suggestedCrops1[i];
+      String prefix = String(i + 1) + "."; 
+
+      lcd.setCursor(col, row);
+      lcd.print(prefix);
+
+      int textStart = col + prefix.length();
+      
+
+      if (cropName.length() > 8) {
+        for (int shift = 0; shift <= cropName.length() - 8; shift++) {
+          lcd.setCursor(textStart, row);
+          lcd.print(cropName.substring(shift, shift + 8)); 
+          delay(400); 
+        }
+      } else {
+        lcd.setCursor(textStart, row);
+        lcd.print(cropName);
+      }
     }
   }
-
 }
 
 void riskyWorthCropsScreen() {
@@ -275,11 +294,32 @@ void riskyWorthCropsScreen() {
     lcd.print("API Conn Failed");
   } else {
     for (int i = 0; i < cropCount2 && i < 5; i++) {
-      lcd.setCursor((i < 3) ? 0 : 10, (i < 3) ? i + 1 : i - 2); 
-      lcd.print(String(i + 1) + suggestedCrops2[i]);
+      int row = (i < 3) ? i + 1 : i - 2;
+      int col = (i < 3) ? 0 : 10;
+
+      String cropName = suggestedCrops2[i];
+      String prefix = String(i + 1) + ".";
+
+      lcd.setCursor(col, row);
+      lcd.print(prefix); 
+
+      int textStart = col + prefix.length();
+
+      if (cropName.length() > 8) {
+        for (int shift = 0; shift <= cropName.length() - 8; shift++) {
+          lcd.setCursor(textStart, row);
+          lcd.print(cropName.substring(shift, shift + 8));
+          delay(400);
+        }
+      } else {
+        lcd.setCursor(textStart, row);
+        lcd.print(cropName);
+      }
     }
   }
 }
+
+
 
 void lcdLoop(float nitrogenValue, float phosphorusValue, float potassiumValue, float phLevel) {
   lcd.clear(); 
