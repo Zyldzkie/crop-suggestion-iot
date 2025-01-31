@@ -92,7 +92,7 @@ void postPhLevel(float phLevel) {
     HTTPClient http;
     http.begin("http://" + String(ipAddress) + "/POST_PH");
     
-    String postData = "{\n    \"pH_level\": " + String(6) + "\n}"; 
+    String postData = "{\n    \"pH_level\": " + String(phLevel) + "\n}"; 
     
     int httpResponseCode = http.POST(postData); 
 
@@ -257,6 +257,9 @@ void suggestedCropsScreen() {
   if (!apiConnectionSuccessful) {
     lcd.setCursor(0, 2);
     lcd.print("API Conn Failed");
+  } else if (cropCount1 == 0) {
+    lcd.setCursor(0, 2);
+    lcd.print("N/A Crops");
   } else {
     for (int i = 0; i < cropCount1 && i < 5; i++) {
       int row = (i < 3) ? i + 1 : i - 2; 
@@ -270,7 +273,6 @@ void suggestedCropsScreen() {
 
       int textStart = col + prefix.length();
       
-
       if (cropName.length() > 8) {
         for (int shift = 0; shift <= cropName.length() - 8; shift++) {
           lcd.setCursor(textStart, row);
@@ -292,6 +294,9 @@ void riskyWorthCropsScreen() {
   if (!apiConnectionSuccessful) {
     lcd.setCursor(0, 2);
     lcd.print("API Conn Failed");
+  } else if (cropCount2 == 0) {
+    lcd.setCursor(0, 2);
+    lcd.print("N/A Crops");
   } else {
     for (int i = 0; i < cropCount2 && i < 5; i++) {
       int row = (i < 3) ? i + 1 : i - 2;
