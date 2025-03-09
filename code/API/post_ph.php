@@ -88,6 +88,7 @@ foreach ($crops as $crop) {
             $end_date = DateTime::createFromFormat('F', $end_month);
 
             if ($start_date && $end_date) {
+                // Adjust the start and end date ranges
                 $start_date->modify("-14 days");
                 $end_date->modify("+14 days");
 
@@ -98,18 +99,18 @@ foreach ($crops as $crop) {
                 $end_date->setDate($current_year, $end_date->format("n"), $end_date->format("j"));
 
                 if ($start_date > $end_date) {
-                    // Cross-year case: Start (Sep) -> End (Mar)
+                    // Cross-year case: (e.g., Sep to Jan or Sep to Mar)
                     $end_date->modify("+1 year");
 
                     $start_of_next_year = new DateTime("$current_year-01-01");
                     $end_of_this_year = new DateTime("$current_year-12-31");
 
-                    if (($today >= $start_date && $today <= $end_of_this_year) ||
-                        ($today >= $start_of_next_year && $today <= $end_date)) {
+                    if (($today >= $start_date && $today <= $end_of_this_year) || 
+                        ($end_date->format("n") >= $today->format("n") && $today <= $end_date)) {
                         $crops_by_month[] = ['name' => $name, 'crop_id' => $crop_id];
                     }
                 } else {
-                    // Normal case (start and end in the same year)
+                    // Normal case: start and end are in the same year
                     if ($today >= $start_date && $today <= $end_date) {
                         $crops_by_month[] = ['name' => $name, 'crop_id' => $crop_id];
                     }
