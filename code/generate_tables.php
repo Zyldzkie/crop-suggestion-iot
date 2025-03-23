@@ -59,7 +59,6 @@ $tables = [
         end_month VARCHAR(20) NOT NULL,
         FOREIGN KEY (crop_id) REFERENCES Crop(id) ON DELETE CASCADE
     )",
-
     "CREATE TABLE IF NOT EXISTS Average_Price_First_Half (
         id INT AUTO_INCREMENT PRIMARY KEY,
         crop_id INT NOT NULL,
@@ -72,6 +71,24 @@ $tables = [
         crop_id INT NOT NULL,
         price DECIMAL(6,2) NOT NULL,
         FOREIGN KEY (crop_id) REFERENCES Crop(id) ON DELETE CASCADE
+    )",
+
+    "CREATE TABLE IF NOT EXISTS sensor_readings (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        nitrogen FLOAT NOT NULL,
+        phosphorus FLOAT NOT NULL,
+        potassium FLOAT NOT NULL,
+        pH_level FLOAT NOT NULL,
+        timestamp INT NOT NULL
+    )",
+    
+    "CREATE TABLE IF NOT EXISTS suggested_crops (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        reading_id INT NOT NULL,
+        crop_name VARCHAR(100) NOT NULL,
+        crop_id INT NOT NULL,
+        crop_type ENUM('gm', 'price') NOT NULL,
+        FOREIGN KEY (reading_id) REFERENCES sensor_readings(id) ON DELETE CASCADE
     )"
 ];
 

@@ -128,6 +128,40 @@ void postPhLevel(float phLevel) {
   }
 }
 
+void postSensorData(float nitrogen, float phosphorus, float potassium, float phLevel) {
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    http.begin("http://" + String(ipAddress) + "/POST_SENSOR_DATA");
+    
+    // Create JSON document
+    DynamicJsonDocument doc(1024);
+    doc["nitrogen"] = nitrogen;
+    doc["phosphorus"] = phosphorus;
+    doc["potassium"] = potassium;
+    doc["pH_level"] = phLevel;
+    
+    String postData;
+    serializeJson(doc, postData);
+    
+    int httpResponseCode = http.POST(postData); 
+
+    if (httpResponseCode > 0) {
+      String response = http.getString();
+      Serial.println(httpResponseCode);
+      Serial.println(response);
+      apiConnectionSuccessful = true;
+    } else {
+      Serial.print("Error on sending POST: ");
+      Serial.println(httpResponseCode);
+      apiConnectionSuccessful = false;
+    }
+    http.end();
+  } else {
+    Serial.println("WiFi not connected");
+    apiConnectionSuccessful = false;
+  }
+}
+
 void setup() {
   Serial.begin(115200);
   Serial2.begin(4800, SERIAL_8N1, 16, 17);
@@ -407,6 +441,7 @@ void loop() {
   }
 
   postPhLevel(pH);
+  postSensorData(nitrogen, phosphorus, potassium, pH);
 
   lcdLoop(nitrogen, phosphorus, potassium, pH);
 

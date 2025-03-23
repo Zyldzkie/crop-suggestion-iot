@@ -8,6 +8,10 @@ switch($user_link){
         require("code/connection.php");
         require("code/API/post_ph.php");
         break;
+    case "/POST_SENSOR_DATA":
+        require("code/connection.php");
+        require("code/API/post_sensor_data.php");
+        break;
     case "/":
         $page = "dashboard";
         require("code/connection.php");
@@ -30,6 +34,10 @@ switch($user_link){
         require("website/Main.php");
         break;
 
+    case "/get_sensor_data":
+        require("code/connection.php");
+        require("website/API/get_sensor_data.php");
+        break;
     case "/update":
         require("code/connection.php");
         require("website/API/update.php");
