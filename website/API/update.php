@@ -63,6 +63,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
             break;
+
+        case 'crop_utilization':
+            $id = $_POST['id'];
+            $crop_utilization = $_POST['crop_utilization'];
+
+            // Basic validation
+            if (empty($id) || empty($crop_utilization)) {
+                echo "All fields are required.";
+            } else {
+                // Update query (Only update the price)
+                $sql = "UPDATE crop_utilization SET utilization_gm_per_day = '$crop_utilization' WHERE id = '$id'";
+
+                if ($conn->query($sql) === TRUE) {
+                    echo "Record updated successfully.";
+                    header("Location: /crop_utilization?status=changed");
+                } else {
+                    echo "Error updating record: " . $conn->error;
+                }
+            }
+            break;
+
+        case 'ph_requirements':
+            $id = $_POST['id'];
+            $min_pH = $_POST['min_pH'];
+            $max_pH = $_POST['max_pH'];
+
+            // Basic validation
+            if (empty($id) || empty($min_pH) || empty($max_pH)) {
+                echo "All fields are required.";
+            } else {
+                // Update query (Only update the price)
+                $sql = "UPDATE ph_level_requirements SET min_pH = '$min_pH', max_pH = '$max_pH'  WHERE id = '$id'";
+
+                if ($conn->query($sql) === TRUE) {
+                    echo "Record updated successfully.";
+                    header("Location: /ph_requirements?status=changed");
+                } else {
+                    echo "Error updating record: " . $conn->error;
+                }
+            }
+            break;
         
         default:
             

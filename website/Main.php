@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Side Navbar with HTML</title>
+  <title>Crop Suggestion</title>
   <style>
     * {
       margin: 0;
@@ -49,7 +49,8 @@
     <a href="/crop">Crop</a>
     <a href="/1sthalf">Average Price 1st</a>
     <a href="/2ndhalf">Average Price 2nd</a>
-    <a href="#">Profile</a>
+    <a href="/crop_utilization">Crop Utilization</a>
+    <a href="/ph_requirements">pH Requirements</a>
   </div>
 
   <div class="content">

@@ -34,14 +34,28 @@ switch($user_link){
         require("website/Main.php");
         break;
 
+    case "/crop_utilization":
+        $page = "crop_utilization";
+        require("code/connection.php");
+        require("website/Main.php");
+        break;
+
+    case "/ph_requirements":
+        $page = "ph_requirements";
+        require("code/connection.php");
+        require("website/Main.php");
+        break;
+
     case "/get_sensor_data":
         require("code/connection.php");
         require("website/API/get_sensor_data.php");
         break;
+
     case "/update":
         require("code/connection.php");
         require("website/API/update.php");
         break;
+
     default:
         http_response_code(404);
         break;
