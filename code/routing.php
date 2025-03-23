@@ -8,6 +8,9 @@ switch($user_link){
         require("code/connection.php");
         require("code/API/post_ph.php");
         break;
+    case "/":
+        require("website/home.php");
+        break;
     default:
         http_response_code(404);
         break;
