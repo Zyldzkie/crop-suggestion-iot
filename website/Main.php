@@ -48,7 +48,7 @@
     <a href="/">Dashboard</a>
     <a href="/crop">Crop</a>
     <a href="/1sthalf">Average Price 1st</a>
-    <a href="#">Average Price 2nd</a>
+    <a href="/2ndhalf">Average Price 2nd</a>
     <a href="#">Profile</a>
   </div>
 

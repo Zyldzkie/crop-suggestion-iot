@@ -1,6 +1,6 @@
 <html>
 <head>
-  <link rel="stylesheet" href="website/css/1sthalf.css">
+  <link rel="stylesheet" href="website/css/2ndhalf.css">
   <script>
     function openModal(id, cropId, price) {
       document.getElementById('modal').style.display = 'block';
@@ -15,7 +15,7 @@
   </script>
 </head>
 <body>
-  <h1>1st Half Average Price</h1>
+  <h1>2nd Half Average Price</h1>
 
   <table border="1" width="100%">
     <tr>
@@ -26,7 +26,7 @@
     </tr>
     <?php
       // Assuming you already have a database connection in $conn using OOP
-      $sql = "SELECT id, crop_id, price FROM average_price_first_half";
+      $sql = "SELECT id, crop_id, price FROM average_price_second_half";
       $result = $conn->query($sql);
       
       if ($result->num_rows > 0) {
@@ -48,7 +48,7 @@
   <div id="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5);">
     <div style="background-color:white; margin:10% auto; padding:20px; width:300px;">
       <h2>Edit Crop Price</h2>
-      <form action="/update?u=1sthalf" method="post">
+      <form action="/update?u=2ndhalf" method="post">
         <input type="hidden" id="editId" name="id">
         <label>Crop ID:</label>
         <input type="text" id="editCropId" name="crop_id" disabled><br>

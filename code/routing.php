@@ -24,6 +24,12 @@ switch($user_link){
         require("website/Main.php");
         break;
 
+    case "/2ndhalf":
+        $page = "2ndhalf";
+        require("code/connection.php");
+        require("website/Main.php");
+        break;
+
     case "/update":
         require("code/connection.php");
         require("website/API/update.php");
