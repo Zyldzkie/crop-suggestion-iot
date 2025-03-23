@@ -14,7 +14,7 @@ float phLevel;
 // CUSTOMIZEABLE - START
 const char* ssid = "test";
 const char* password = "88888888";
-const char* ipAddress = "192.168.60.248";
+const char* ipAddress = "http://iotcropsuggestion.sbs/";
 // CUSTOMIZEABLE - END
 
 String suggestedCrops1[5]; 
