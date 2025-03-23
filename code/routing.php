@@ -34,6 +34,18 @@ switch($user_link){
         require("website/Main.php");
         break;
 
+    case "/crop_utilization":
+        $page = "crop_utilization";
+        require("code/connection.php");
+        require("website/Main.php");
+        break;
+
+    case "/ph_requirements":
+        $page = "ph_requirements";
+        require("code/connection.php");
+        require("website/Main.php");
+        break;
+
     case "/get_sensor_data":
         require("code/connection.php");
         require("website/API/get_sensor_data.php");
