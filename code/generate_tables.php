@@ -86,7 +86,6 @@ $tables = [
         id INT AUTO_INCREMENT PRIMARY KEY,
         reading_id INT NOT NULL,
         crop_name VARCHAR(100) NOT NULL,
-        crop_id INT NOT NULL,
         crop_type ENUM('gm', 'price') NOT NULL,
         FOREIGN KEY (reading_id) REFERENCES sensor_readings(id) ON DELETE CASCADE
     )"
