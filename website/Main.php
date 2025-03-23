@@ -38,22 +38,22 @@
 
     .content {
       flex-grow: 1;
-      background-color: #f8f9fa; /* Subtle off-white */
+      background-color: #f8p9fa; /* Subtle off-white */
       padding: 40px;
     }
   </style>
 </head>
 <body>
   <div class="sidebar">
-    <a href="#">Home</a>
-    <a href="#">About</a>
-    <a href="#">Services</a>
-    <a href="#">Contact</a>
+    <a href="/">Dashboard</a>
+    <a href="/crop">Crop</a>
+    <a href="/1sthalf">Average Price 1st</a>
+    <a href="#">Average Price 2nd</a>
     <a href="#">Profile</a>
   </div>
 
   <div class="content">
-    <?php //?> 
+    <?php include("pages/"."$page" . ".php");?> 
   </div>
 </body>
 </html>
