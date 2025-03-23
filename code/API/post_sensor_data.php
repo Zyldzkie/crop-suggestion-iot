@@ -31,21 +31,53 @@ $reading_id = $conn->insert_id;
 // Store suggested crops if available
 if (isset($data["suggestedCrops1"])) {
     foreach ($data["suggestedCrops1"] as $crop) {
-        $sql = "INSERT INTO suggested_crops (reading_id, crop_name, crop_id, crop_type) 
-                VALUES (?, ?, ?, 'gm')";
+        $sql = "INSERT INTO suggested_crops (reading_id, crop_name, crop_type) 
+                VALUES (?, ?, 'gm')";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("isi", $reading_id, $crop["name"], $crop["crop_id"]);
+        $stmt->bind_param("is", $reading_id, $crop["name"]);
         $stmt->execute();
     }
 }
 
 if (isset($data["suggestedCrops2"])) {
     foreach ($data["suggestedCrops2"] as $crop) {
-        $sql = "INSERT INTO suggested_crops (reading_id, crop_name, crop_id, crop_type) 
-                VALUES (?, ?, ?, 'price')";
+        $sql = "INSERT INTO suggested_crops (reading_id, crop_name, crop_type) 
+                VALUES (?, ?, 'price')";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("isi", $reading_id, $crop["name"], $crop["crop_id"]);
+        $stmt->bind_param("is", $reading_id, $crop["name"]);
         $stmt->execute();
+    }
+}
+
+// Get suggested crops
+$suggestedCrops1 = [];
+$suggestedCrops2 = [];
+
+if ($reading_id) {
+    // Get GM/day based crops
+    $sql = "SELECT * FROM suggested_crops WHERE reading_id = ? AND crop_type = 'gm'";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $reading_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    while ($row = $result->fetch_assoc()) {
+        $suggestedCrops1[] = [
+            'name' => $row['crop_name']
+        ];
+    }
+    
+    // Get price based crops
+    $sql = "SELECT * FROM suggested_crops WHERE reading_id = ? AND crop_type = 'price'";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $reading_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    while ($row = $result->fetch_assoc()) {
+        $suggestedCrops2[] = [
+            'name' => $row['crop_name']
+        ];
     }
 }
 

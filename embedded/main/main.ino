@@ -133,12 +133,23 @@ void postSensorData(float nitrogen, float phosphorus, float potassium, float phL
     HTTPClient http;
     http.begin("http://" + String(ipAddress) + "/POST_SENSOR_DATA");
     
-    // Create JSON document
-    DynamicJsonDocument doc(1024);
+    DynamicJsonDocument doc(2048);
     doc["nitrogen"] = nitrogen;
     doc["phosphorus"] = phosphorus;
     doc["potassium"] = potassium;
     doc["pH_level"] = phLevel;
+    
+    JsonArray crops1 = doc.createNestedArray("suggestedCrops1");
+    for (int i = 0; i < cropCount1 && i < 5; i++) {
+      JsonObject crop = crops1.createNestedObject();
+      crop["name"] = suggestedCrops1[i];
+    }
+    
+    JsonArray crops2 = doc.createNestedArray("suggestedCrops2");
+    for (int i = 0; i < cropCount2 && i < 5; i++) {
+      JsonObject crop = crops2.createNestedObject();
+      crop["name"] = suggestedCrops2[i];
+    }
     
     String postData;
     serializeJson(doc, postData);
