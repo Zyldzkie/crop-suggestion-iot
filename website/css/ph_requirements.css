@@ -1,4 +1,9 @@
-h1 {
+
+h1{
+    margin-bottom: 20px;
+}
+
+h3 {
     margin-bottom: 10px;
 }
 
@@ -26,3 +31,4 @@ button.edit-btn {
 button.edit-btn:hover {
     background-color: #0056b3;
 }
+

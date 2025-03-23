@@ -50,10 +50,12 @@ switch($user_link){
         require("code/connection.php");
         require("website/API/get_sensor_data.php");
         break;
+
     case "/update":
         require("code/connection.php");
         require("website/API/update.php");
         break;
+        
     default:
         http_response_code(404);
         break;
