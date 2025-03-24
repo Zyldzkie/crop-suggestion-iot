@@ -104,10 +104,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
             break;
-        
-        default:
-            
+
+        case 'time_of_planting':
+            $id = $_POST['id'];
+            $start_month = $_POST['start_month'];
+            $end_month = $_POST['end_month'];
+
+            // Basic validation
+            if (empty($id) || empty($start_month) || empty($end_month)) {
+                echo "All fields are required.";
+            } else {
+                // Update query (Only update the price)
+                $sql = "UPDATE time_of_planting SET start_month = '$start_month', end_month = '$end_month'  WHERE id = '$id'";
+
+                if ($conn->query($sql) === TRUE) {
+                    echo "Record updated successfully.";
+                    header("Location: /time_of_planting?status=changed");
+                } else {
+                    echo "Error updating record: " . $conn->error;
+                }
+            }
             break;
+
+        case 'not_in_season':
+            $id = $_POST['id'];
+            $start_month = $_POST['start_month'];
+            $end_month = $_POST['end_month'];
+
+            // Basic validation
+            if (empty($id) || empty($start_month) || empty($end_month)) {
+                echo "All fields are required.";
+            } else {
+                // Update query (Only update the price)
+                $sql = "UPDATE time_of_planting_not_in_season SET start_month = '$start_month', end_month = '$end_month'  WHERE id = '$id'";
+
+                if ($conn->query($sql) === TRUE) {
+                    echo "Record updated successfully.";
+                    header("Location: /not_in_season?status=changed");
+                } else {
+                    echo "Error updating record: " . $conn->error;
+                }
+            }
+            break;
+
+        default:
+            break;
+
     }
 }
 

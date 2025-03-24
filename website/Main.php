@@ -51,6 +51,8 @@
     <a href="/2ndhalf">Average Price 2nd</a>
     <a href="/crop_utilization">Crop Utilization</a>
     <a href="/ph_requirements">pH Requirements</a>
+    <a href="/time_of_planting">Planting Time</a>
+    <a href="/not_in_season">Not Season</a>
   </div>
 
   <div class="content">

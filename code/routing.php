@@ -46,6 +46,18 @@ switch($user_link){
         require("website/Main.php");
         break;
 
+    case "/time_of_planting":
+        $page = "time_of_planting";
+        require("code/connection.php");
+        require("website/Main.php");
+        break;
+
+    case "/not_in_season":
+        $page = "not_in_season";
+        require("code/connection.php");
+        require("website/Main.php");
+        break;
+
     case "/get_sensor_data":
         require("code/connection.php");
         require("website/API/get_sensor_data.php");
